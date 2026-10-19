@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brandon Ashley P. Lugay | Space Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: '#070913',
+                        deepspace: '#0c1022',
+                        starlight: '#F4D35E',
+                        cyanglow: '#00F0FF',
+                        cosmicpurple: '#7000FF',
+                        cardbg: 'rgba(15, 23, 42, 0.75)',
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            cursor: none !important;
+        }
+
+        body {
+            background-color: #070913;
+            color: #E2E8F0;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Glassmorphism Styling */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(244, 211, 94, 0.4);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
+        }
+
+        /* Spaceship Cursor Styling */
+        #ship-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 32px;
+            height: 32px;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.05s ease-out;
+        }
+
+        .thruster-particle {
+            position: fixed;
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 9998;
+            animation: fadeParticle 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeParticle {
+            0% { opacity: 0.9; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.1); }
+        }
+
+        /* Custom Glow Utility Classes */
+        .text-glow-cyan {
+            text-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+        }
+
+        .text-glow-gold {
+            text-shadow: 0 0 12px rgba(244, 211, 94, 0.6);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070913;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00F0FF;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen selection:bg-cyanglow selection:text-void">
+
+    <!-- Canvas for Stars and Falling Comets -->
+    <canvas id="space-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+    <!-- Custom Spaceship Cursor -->
+    <div id="ship-cursor" class="hidden md:block">
+        <svg id="spaceship-svg" class="w-8 h-8 text-cyanglow filter drop-shadow-[0_0_8px_#00F0FF]" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L2 22L12 18L22 22L12 2Z" fill="#070913" stroke="#00F0FF" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M12 2L12 18" stroke="#F4D35E" stroke-width="1.8"/>
+            <circle cx="12" cy="19.5" r="1.5" fill="#FF4500" class="animate-ping"/>
+        </svg>
+    </div>
+
+    <!-- Navigation Header -->
+    <nav class="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-4">
+        <div class="max-w-7xl mx-auto glass-panel rounded-2xl px-6 py-3 flex items-center justify-between border border-cyanglow/20">
+            <a href="#hero" class="font-orbitron font-extrabold text-lg md:text-xl text-transparent bg-clip-text bg-gradient-to-r from-cyanglow via-starlight to-cosmicpurple tracking-wider">
+                BRANDON LUGAY
+            </a>
+
+            <div class="hidden lg:flex items-center space-x-8 text-xs font-semibold tracking-widest text-slate-300">
+                <a href="#about" class="hover:text-cyanglow transition-colors duration-300">ABOUT</a>
+                <a href="#leadership" class="hover:text-cyanglow transition-colors duration-300">LEADERSHIP</a>
+                <a href="#projects" class="hover:text-cyanglow transition-colors duration-300">PROJECTS</a>
+                <a href="#certifications" class="hover:text-cyanglow transition-colors duration-300">CERTIFICATIONS</a>
+                <a href="#achievements" class="hover:text-cyanglow transition-colors duration-300">ACHIEVEMENTS</a>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <a href="https://github.com/brandonlugay-9cmyk" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-cyanglow text-lg transition-transform hover:scale-110">
+                    <i class="fa-brands fa-github"></i>
+                </a>
+                <a href="https://www.instagram.com/vzz._.ly" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-pink-400 text-lg transition-transform hover:scale-110">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="https://www.facebook.com/brandon.ashley.pacinos.lugay?mibextid=wwXIfr&rdid=fm9Ej3uvM3XgmQav&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Gzf5s5xsd%2F%3Fmibextid%3DwwXIfr#" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-blue-400 text-lg transition-transform hover:scale-110">
+                    <i class="fa-brands fa-facebook"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="relative z-10 pt-24 space-y-28">
+
+        <!-- HERO SECTION -->
+        <section id="hero" class="min-h-[85vh] flex items-center justify-center px-4">
+            <div class="max-w-4xl mx-auto text-center flex flex-col items-center">
+                
+                <!-- Cosmic Glowing Avatar -->
+                <div class="relative w-44 h-44 md:w-52 md:h-52 mb-8">
+                    <div class="absolute -inset-1.5 rounded-full bg-gradient-to-r from-cyanglow via-starlight to-cosmicpurple animate-spin opacity-80 blur-md" style="animation-duration: 9s;"></div>
+                    <div class="relative w-full h-full rounded-full overflow-hidden border-2 border-cyanglow/60 shadow-2xl bg-deepspace">
+                        <img src="profile.jpg" alt="Brandon Ashley P. Lugay" class="w-full h-full object-cover">
+                    </div>
+                </div>
+
+                <h1 class="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white mb-4 text-glow-cyan leading-tight">
+                    BRANDON ASHLEY P. LUGAY
+                </h1>
+
+                <p class="text-base sm:text-xl font-semibold text-cyanglow mb-6 tracking-widest font-orbitron">
+                    4th Year BS Computer Engineering (BSCpE) • ICCT Colleges
+                </p>
+
+                <!-- Hero Badges -->
+                <div class="flex flex-wrap justify-center gap-3 mb-10 text-xs md:text-sm font-mono">
+                    <span class="px-4 py-1.5 rounded-full glass-panel text-starlight border border-starlight/40 font-semibold flex items-center gap-2">
+                        <i class="fa-solid fa-crown text-xs"></i> Former ICPEP President
+                    </span>
+                    <span class="px-4 py-1.5 rounded-full glass-panel text-cyanglow border border-cyanglow/40 font-semibold flex items-center gap-2">
+                        <i class="fa-solid fa-person-dots-from-line text-xs"></i> IES Cheerdance Captain (3 Yrs)
+                    </span>
+                    <span class="px-4 py-1.5 rounded-full glass-panel text-amber-400 border border-amber-400/40 font-semibold flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-xs"></i> 1x Cheerdance Champion
+                    </span>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="#projects" class="px-8 py-3.5 rounded-xl bg-cyanglow text-void font-orbitron font-bold text-xs md:text-sm hover:bg-starlight transition-all duration-300 shadow-lg shadow-cyanglow/30">
+                        EXPLORE PROJECTS
+                    </a>
+                    <a href="#certifications" class="px-8 py-3.5 rounded-xl glass-panel text-white font-orbitron font-bold text-xs md:text-sm hover:border-cyanglow transition-all duration-300">
+                        VIEW CERTIFICATIONS
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT SECTION -->
+        <section id="about" class="px-4 max-w-5xl mx-auto">
+            <div class="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden">
+                <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-cyanglow/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <span class="text-xs font-mono tracking-widest text-cyanglow uppercase block mb-2">// COMMAND & SKILLSET</span>
+                <h2 class="text-2xl md:text-4xl font-extrabold text-white mb-6">ABOUT ME</h2>
+
+                <p class="text-slate-300 text-base md:text-lg leading-relaxed mb-6 font-light">
+                    I am a 4th-year BS Computer Engineering student at ICCT Colleges with a passion for software architecture, system organization, and team management. Having served as the former <strong class="text-starlight font-semibold">ICPEP President</strong> and captained the ICCT Engineering Society (IES) Cheerdance team for 3 consecutive years, I combine technical engineering discipline with high-impact leadership and creative group dynamic command.
+                </p>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t border-white/10 text-center font-mono text-xs">
+                    <div class="p-4 rounded-xl bg-void/50 border border-white/5">
+                        <div class="text-cyanglow font-bold text-lg">BSCpE</div>
+                        <div class="text-slate-400 mt-1">4th Year Student</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-void/50 border border-white/5">
+                        <div class="text-starlight font-bold text-lg">LEADERSHIP</div>
+                        <div class="text-slate-400 mt-1">Student Governance</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-void/50 border border-white/5">
+                        <div class="text-purple-400 font-bold text-lg">ATHLETICS</div>
+                        <div class="text-slate-400 mt-1">3 Years Cheer Captain</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-void/50 border border-white/5">
+                        <div class="text-emerald-400 font-bold text-lg">FULL-STACK</div>
+                        <div class="text-slate-400 mt-1">Logistics & Web Dev</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LEADERSHIP TIMELINE SECTION -->
+        <section id="leadership" class="px-4 max-w-5xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="text-xs font-mono tracking-widest text-starlight uppercase block mb-2">// GOVERNANCE RECORD</span>
+                <h2 class="text-3xl md:text-5xl font-extrabold text-white">LEADERSHIP ROLES</h2>
+            </div>
+
+            <div class="relative border-l-2 border-cyanglow/30 ml-4 md:ml-32 space-y-10">
+                <!-- Role 1 -->
+                <div class="relative pl-8 md:pl-12">
+                    <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-cyanglow border-4 border-void shadow-[0_0_10px_#00F0FF]"></div>
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <span class="text-xs font-mono text-cyanglow font-bold">EXECUTIVE OFFICER</span>
+                        <h3 class="text-xl font-bold text-white mt-1">ICPEP PRESIDENT</h3>
+                        <p class="text-slate-300 text-sm mt-2">Served as President of the Institute of Computer Engineers of the Philippines (ICPEP) student chapter at ICCT Colleges.</p>
+                    </div>
+                </div>
+
+                <!-- Role 2 -->
+                <div class="relative pl-8 md:pl-12">
+                    <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-starlight border-4 border-void shadow-[0_0_10px_#F4D35E]"></div>
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <span class="text-xs font-mono text-starlight font-bold">IES BOARD</span>
+                        <h3 class="text-xl font-bold text-white mt-1">CAMPUSES COORDINATOR</h3>
+                        <p class="text-slate-300 text-sm mt-2">Coordinated inter-campus academic affairs, student operations, and technical events for ICCT Engineering Society.</p>
+                    </div>
+                </div>
+
+                <!-- Role 3 -->
+                <div class="relative pl-8 md:pl-12">
+                    <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-purple-500 border-4 border-void shadow-[0_0_10px_#7000FF]"></div>
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <span class="text-xs font-mono text-purple-400 font-bold">IES JUNIOR BOARD</span>
+                        <h3 class="text-xl font-bold text-white mt-1">IES JUNIOR PRESIDENT</h3>
+                        <p class="text-slate-300 text-sm mt-2">Led the junior executive council of the ICCT Engineering Society, managing organizational projects.</p>
+                    </div>
+                </div>
+
+                <!-- Role 4 -->
+                <div class="relative pl-8 md:pl-12">
+                    <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-cyanglow border-4 border-void"></div>
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <span class="text-xs font-mono text-cyanglow font-bold">PUBLIC RELATIONS</span>
+                        <h3 class="text-xl font-bold text-white mt-1">PRO (Public Relations Officer)</h3>
+                        <p class="text-slate-300 text-sm mt-2">Managed communications, publicity, and social media engagement for student engineering activities.</p>
+                    </div>
+                </div>
+
+                <!-- Role 5 -->
+                <div class="relative pl-8 md:pl-12">
+                    <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-starlight border-4 border-void"></div>
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <span class="text-xs font-mono text-starlight font-bold">JUNIOR OFFICER</span>
+                        <h3 class="text-xl font-bold text-white mt-1">IES JUNIOR OFFICER</h3>
+                        <p class="text-slate-300 text-sm mt-2">Initial governance position assisting senior executives in executing department initiatives.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJECTS SECTION -->
+        <section id="projects" class="px-4 max-w-5xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="text-xs font-mono tracking-widest text-cyanglow uppercase block mb-2">// TECHNICAL APPLICATION</span>
+                <h2 class="text-3xl md:text-5xl font-extrabold text-white">PROJECTS</h2>
+            </div>
+
+            <div class="glass-panel p-8 rounded-3xl border border-cyanglow/30 relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div>
+                    <span class="px-3 py-1 rounded-full bg-cyanglow/10 border border-cyanglow/40 text-cyanglow text-xs font-mono">
+                        <i class="fa-solid fa-truck-ramp-box"></i> LOGISTICS SYSTEM
+                    </span>
+                    <h3 class="text-2xl font-bold text-white mt-3 mb-2">EDIdeliver (Logistics)</h3>
+                    <p class="text-slate-300 text-sm max-w-2xl leading-relaxed">
+                        Full-stack delivery management solution featuring Supabase storage buckets, driver earnings dashboards, and active route tracking interfaces.
+                    </p>
+                </div>
+                <div>
+                    <button onclick="openEdiModal()" class="px-6 py-3.5 rounded-xl bg-cyanglow text-void font-orbitron font-bold text-xs hover:bg-starlight transition-all duration-300 shadow-md flex items-center gap-2 whitespace-nowrap">
+                        <span>VIEW DETAILS</span>
+                        <i class="fa-solid fa-expand text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- CERTIFICATIONS SECTION -->
+        <section id="certifications" class="px-4 max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="text-xs font-mono tracking-widest text-starlight uppercase block mb-2">// ACADEMIC MILESTONES</span>
+                <h2 class="text-3xl md:text-5xl font-extrabold text-white">CERTIFICATIONS</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Cert 1 -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="relative w-full h-48 bg-slate-900 rounded-xl overflow-hidden mb-5 border border-cyanglow/30 p-4 flex flex-col justify-between">
+                            <div class="text-[10px] font-mono text-cyanglow uppercase tracking-wider text-center border-b border-slate-800 pb-2">
+                                Certificate of Participation
+                            </div>
+                            <div class="text-center my-auto">
+                                <p class="text-starlight font-bold text-xs leading-snug">"Bioinformatics and Digital Science Information in the Philippine Context"</p>
+                                <p class="text-slate-400 text-[10px] mt-2">Speaker: Dr. Ian Kendrich Fontanilla</p>
+                            </div>
+                            <div class="text-[9px] font-mono text-slate-500 text-center">March 3, 2026 • ICCT Amphitheater</div>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Bioinformatics & Digital Science</h3>
+                        <p class="text-slate-300 text-xs leading-relaxed mb-4">Attended expert-led seminar on digital science applications and bioinformatics within the Philippine context.</p>
+                    </div>
+                    <button onclick="openCertModal('bio')" class="w-full py-2.5 bg-cyanglow/10 hover:bg-cyanglow/30 border border-cyanglow/40 rounded-xl text-cyanglow text-xs font-bold font-orbitron transition-all">
+                        VIEW CERTIFICATE DETAILS
+                    </button>
+                </div>
+
+                <!-- Cert 2 -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="relative w-full h-48 bg-slate-900 rounded-xl overflow-hidden mb-5 border border-cyanglow/30 p-4 flex flex-col justify-between">
+                            <div class="text-[10px] font-mono text-cyanglow uppercase tracking-wider text-center border-b border-slate-800 pb-2">
+                                Certificate of Participation
+                            </div>
+                            <div class="text-center my-auto">
+                                <p class="text-starlight font-bold text-xs leading-snug">"Advancing Secure Networking for Smart Environment: Design, Threat Modeling..."</p>
+                                <p class="text-slate-400 text-[10px] mt-2">Speaker: Engr. Mark Anthony Melendrez</p>
+                            </div>
+                            <div class="text-[9px] font-mono text-slate-500 text-center">March 3, 2026 • ICCT Amphitheater</div>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Secure Networking & Threat Modeling</h3>
+                        <p class="text-slate-300 text-xs leading-relaxed mb-4">Participated in smart environment network defense, threat modeling, and mitigation strategy sessions.</p>
+                    </div>
+                    <button onclick="openCertModal('net')" class="w-full py-2.5 bg-cyanglow/10 hover:bg-cyanglow/30 border border-cyanglow/40 rounded-xl text-cyanglow text-xs font-bold font-orbitron transition-all">
+                        VIEW CERTIFICATE DETAILS
+                    </button>
+                </div>
+
+                <!-- Cert 3 -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="relative w-full h-48 bg-slate-900 rounded-xl overflow-hidden mb-5 border border-cyanglow/30 p-4 flex flex-col justify-between">
+                            <div class="text-[10px] font-mono text-cyanglow uppercase tracking-wider text-center border-b border-slate-800 pb-2">
+                                Certificate of Participation
+                            </div>
+                            <div class="text-center my-auto">
+                                <p class="text-starlight font-bold text-xs leading-snug">"EDay@11 Innovate & Elevate: Unleashing the Power of Excellence"</p>
+                                <p class="text-slate-400 text-[10px] mt-2">ICCT Colleges Engineering Day</p>
+                            </div>
+                            <div class="text-[9px] font-mono text-slate-500 text-center">March 11, 2024 • Cainta Main Campus</div>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">EDay@11 Engineering Seminar</h3>
+                        <p class="text-slate-300 text-xs leading-relaxed mb-4">Successfully participated in annual Engineering Seminar focused on technology innovation and excellence.</p>
+                    </div>
+                    <button onclick="openCertModal('eday')" class="w-full py-2.5 bg-cyanglow/10 hover:bg-cyanglow/30 border border-cyanglow/40 rounded-xl text-cyanglow text-xs font-bold font-orbitron transition-all">
+                        VIEW CERTIFICATE DETAILS
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACHIEVEMENTS SECTION -->
+        <section id="achievements" class="px-4 max-w-5xl mx-auto pb-20">
+            <div class="text-center mb-16">
+                <span class="text-xs font-mono tracking-widest text-cyanglow uppercase block mb-2">// TROPHY CABINET</span>
+                <h2 class="text-3xl md:text-5xl font-extrabold text-white">ACHIEVEMENTS</h2>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Item 1 -->
+                <div class="glass-panel p-6 rounded-2xl border-2 border-starlight/50 bg-gradient-to-b from-starlight/10 to-transparent">
+                    <span class="text-xs font-mono text-starlight font-bold">2026</span>
+                    <h3 class="text-xl font-extrabold text-white mt-1">1x CHAMPION</h3>
+                    <p class="text-xs font-mono text-cyanglow mt-1">Cheerdance Competition 2026</p>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="glass-panel p-6 rounded-2xl">
+                    <span class="text-xs font-mono text-slate-400 font-bold">2025</span>
+                    <h3 class="text-xl font-extrabold text-white mt-1">1st Runner Up</h3>
+                    <p class="text-xs font-mono text-slate-400 mt-1">Cheerdance Competition 2025</p>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="glass-panel p-6 rounded-2xl">
+                    <span class="text-xs font-mono text-amber-600 font-bold">2024</span>
+                    <h3 class="text-xl font-extrabold text-white mt-1">2nd Runner Up</h3>
+                    <p class="text-xs font-mono text-amber-500 mt-1">Cheerdance Competition 2024</p>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="glass-panel p-6 rounded-2xl">
+                    <span class="text-xs font-mono text-purple-400 font-bold">3 CONSECUTIVE YEARS</span>
+                    <h3 class="text-xl font-extrabold text-white mt-1">Cheerdance Captain</h3>
+                    <p class="text-xs font-mono text-purple-300 mt-1">ICCT Engineering Society (IES)</p>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="glass-panel p-6 rounded-2xl sm:col-span-2 lg:col-span-2">
+                    <span class="text-xs font-mono text-cyanglow font-bold">3 CONSECUTIVE YEARS</span>
+                    <h3 class="text-xl font-extrabold text-white mt-1">Step Up Dance Contestant</h3>
+                    <p class="text-xs font-mono text-slate-300 mt-1">Dancer for Step Up dance competition 3 years running</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- EDIDELIVER MODAL -->
+    <div id="edi-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden">
+        <div class="glass-panel w-full max-w-4xl max-h-[90vh] rounded-3xl overflow-hidden flex flex-col border border-cyanglow/40">
+            <div class="p-5 border-b border-white/10 flex items-center justify-between bg-deepspace">
+                <h3 class="font-orbitron font-bold text-lg text-white">EDIdeliver Vector Mockups</h3>
+                <button onclick="closeEdiModal()" class="w-8 h-8 rounded-lg bg-white/10 text-slate-300 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-6">
+                <!-- Mockup 1 -->
+                <div class="bg-white rounded-xl p-4 text-slate-800 text-xs font-sans shadow-lg">
+                    <div class="text-[10px] text-slate-500 font-mono border-b pb-2 mb-2">Supabase Storage Manager</div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-100 p-2 rounded">
+                            <div class="p-1 bg-emerald-100 text-emerald-800 rounded font-semibold text-[10px] mb-1">vehicle-1762439876830.jpg</div>
+                            <div class="p-1 bg-slate-200 text-slate-700 rounded text-[10px]">license-1762439876830.jpg</div>
+                        </div>
+                        <div class="bg-slate-800 text-white p-3 rounded flex flex-col items-center justify-center text-center">
+                            <i class="fa-solid fa-motorcycle text-3xl text-amber-400 mb-1"></i>
+                            <span class="text-[9px] font-mono">1.7 MB • JPG Preview Verified</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mockup 2 -->
+                <div class="max-w-xs mx-auto bg-slate-50 rounded-2xl p-4 border text-slate-800 text-xs shadow-lg">
+                    <div class="font-bold text-sm mb-2 flex justify-between">
+                        <span>EdiDeliver Earnings</span>
+                        <span class="text-orange-500 font-mono">₱105.97</span>
+                    </div>
+                    <div class="p-3 bg-white rounded-xl border mb-2">
+                        <div class="text-[10px] text-slate-400">Total Earnings</div>
+                        <div class="text-base font-bold text-orange-600">₱105.97</div>
+                    </div>
+                    <div class="p-2 bg-slate-100 rounded-lg text-[10px] flex justify-between">
+                        <span>BK1762277698770</span>
+                        <span class="font-bold text-emerald-600">+₱105.97</span>
+                    </div>
+                </div>
+
+                <!-- Mockup 3 -->
+                <div class="max-w-xs mx-auto bg-white rounded-2xl p-4 border text-slate-800 text-xs shadow-lg space-y-2">
+                    <div class="p-3 border rounded-xl bg-slate-50">
+                        <div class="flex justify-between font-bold text-[11px] mb-1">
+                            <span>BK1762439539676</span>
+                            <span class="text-amber-500">searching</span>
+                        </div>
+                        <div class="text-[10px] text-slate-500">Rosario Pasig ➔ Pinagbuhatan Pasig</div>
+                        <div class="text-right font-bold text-orange-600 text-xs mt-1">₱106.78</div>
+                    </div>
+                    <div class="p-3 border rounded-xl bg-slate-50">
+                        <div class="flex justify-between font-bold text-[11px] mb-1">
+                            <span>BK1762438981779</span>
+                            <span class="text-amber-500">searching</span>
+                        </div>
+                        <div class="text-[10px] text-slate-500">Rosario Pasig ➔ Taytay</div>
+                        <div class="text-right font-bold text-orange-600 text-xs mt-1">₱100.78</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CERTIFICATE LIGHTBOX MODAL -->
+    <div id="cert-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden">
+        <div class="glass-panel w-full max-w-3xl rounded-3xl overflow-hidden p-6 relative border border-cyanglow/50">
+            <button onclick="closeCertModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div id="cert-modal-body" class="p-6 bg-slate-950 rounded-2xl border border-white/10 text-center">
+                <!-- Dynamically Inserted -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-8 text-center text-xs font-mono text-slate-500 border-t border-white/5">
+        <p>&copy; Brandon Ashley P. Lugay • ICCT Colleges BSCpE Portfolio</p>
+    </footer>
+
+    <!-- Interactive Canvas & Cursor Script -->
+    <script>
+        function openEdiModal() {
+            document.getElementById('edi-modal').classList.remove('hidden');
+        }
+        function closeEdiModal() {
+            document.getElementById('edi-modal').classList.add('hidden');
+        }
+
+        const certs = {
+            bio: {
+                title: "Bioinformatics and Digital Science Information in the Philippine Context",
+                speaker: "Dr. Ian Kendrich Fontanilla",
+                date: "March 3, 2026",
+                location: "ICCT Colleges Amphitheater",
+                image: "cert1.jpg" 
+            },
+            net: {
+                title: "Advancing Secure Networking for Smart Environment: Design, Threat Modeling, and Mitigation Strategies",
+                speaker: "Engr. Mark Anthony Melendrez",
+                date: "March 3, 2026",
+                location: "ICCT Colleges Amphitheater",
+                image: "cert2.jpg"
+            },
+            eday: {
+                title: "EDay@11 Innovate & Elevate: Unleashing the Power of Excellence",
+                speaker: "ICCT Colleges COEDT",
+                date: "March 11, 2024",
+                location: "ICCT Colleges Cainta Main Campus",
+                image: "cert3.jpg"
+            }
+        };
+
+        function openCertModal(key) {
+  const data = certs[key];
+  const body = document.getElementById('cert-modal-body');
+  
+  body.innerHTML = `
+    <div class="border-2 border-starlight/40 p-6 rounded-xl bg-slate-900 text-slate-200 space-y-4">
+      <div class="text-xs font-mono tracking-widest text-cyanglow uppercase">OFFICIAL CERTIFICATION</div>
+      <h3 class="text-xl font-bold text-starlight leading-snug">${data.title}</h3>
+      
+      <!-- CERTIFICATE IMAGE -->
+      <div class="w-full max-h-[50vh] overflow-hidden rounded-lg border border-cyanglow/30 my-4 bg-black/60">
+        <img src="${data.image}" alt="${data.title}" class="w-full h-full object-contain mx-auto" />
+      </div>
+
+      <p class="text-sm text-slate-300">Awarded to <strong class="text-white font-semibold">BRANDON ASHLEY P. LUGAY</strong></p>
+      
+      <div class="pt-4 border-t border-slate-800 text-xs font-mono text-slate-400 space-y-1">
+        <div>Facilitated by: <span class="text-slate-200">${data.speaker}</span></div>
+        <div>Date: <span class="text-slate-200">${data.date}</span></div>
+        <div>Venue: <span class="text-slate-200">${data.location}</span></div>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('cert-modal').classList.remove('hidden');
+}
+
+        function closeCertModal() {
+            document.getElementById('cert-modal').classList.add('hidden');
+        }
+
+        window.onload = function() {
+            // === CANVAS ANIMATION ENGINE ===
+            const canvas = document.getElementById('space-canvas');
+            const ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const stars = Array.from({ length: 160 }, () => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 1.5,
+                alpha: Math.random()
+            }));
+
+            const comets = [];
+
+            function loop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                stars.forEach(s => {
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha})`;
+                    ctx.fill();
+
+                    s.alpha += (Math.random() - 0.5) * 0.02;
+                    if (s.alpha < 0.1) s.alpha = 0.1;
+                    if (s.alpha > 0.9) s.alpha = 0.9;
+                });
+
+                if (Math.random() < 0.035 && comets.length < 4) {
+                    comets.push({
+                        x: Math.random() * canvas.width,
+                        y: 0,
+                        speed: Math.random() * 6 + 4,
+                        length: Math.random() * 70 + 40,
+                        alpha: 1
+                    });
+                }
+
+                for (let i = comets.length - 1; i >= 0; i--) {
+                    const c = comets[i];
+                    const gradient = ctx.createLinearGradient(c.x, c.y, c.x - c.length, c.y - c.length);
+                    gradient.addColorStop(0, `rgba(0, 240, 255, ${c.alpha})`);
+                    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                    ctx.beginPath();
+                    ctx.moveTo(c.x, c.y);
+                    ctx.lineTo(c.x - c.length, c.y - c.length);
+                    ctx.strokeStyle = gradient;
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+
+                    c.x += c.speed;
+                    c.y += c.speed;
+                    c.alpha -= 0.005;
+
+                    if (c.alpha <= 0 || c.y > canvas.height) comets.splice(i, 1);
+                }
+
+                requestAnimationFrame(loop);
+            }
+            loop();
+
+            // === CURSOR TRACKER ===
+            const ship = document.getElementById('ship-cursor');
+            let mouseX = window.innerWidth / 2;
+            let mouseY = window.innerHeight / 2;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+
+                if (Math.random() < 0.4) {
+                    const p = document.createElement('div');
+                    p.className = 'thruster-particle';
+                    p.style.left = `${e.clientX}px`;
+                    p.style.top = `${e.clientY + 10}px`;
+                    p.style.width = `${Math.random() * 5 + 2}px`;
+                    p.style.height = p.style.width;
+                    p.style.backgroundColor = Math.random() > 0.5 ? '#00F0FF' : '#F4D35E';
+                    document.body.appendChild(p);
+                    setTimeout(() => p.remove(), 400);
+                }
+            });
+
+            function updateShip() {
+                ship.style.left = `${mouseX}px`;
+                ship.style.top = `${mouseY}px`;
+                requestAnimationFrame(updateShip);
+            }
+            updateShip();
+        };
+    </script>
+</body>
+</html>
